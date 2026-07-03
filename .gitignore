@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.token
+*token*.txt
+
+# Données brutes / intermédiaires volumineuses (régénérables via les scripts ETL,
+# non versionnées pour rester sous les limites de taille GitHub).
+data/raw/
+data/processed/fires_raw_with_wilaya.csv
