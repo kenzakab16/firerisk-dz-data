@@ -1,0 +1,122 @@
+{
+  "version": "v2",
+  "changes_vs_v1": "ajout des variables d'assèchement antérieur (precip 7/30j, temp 7j, ET0 30j, jours sans pluie)",
+  "trained_on": "2015-01-01 -> 2023-12-31 (ère VIIRS, zone forestière, 36 wilayas)",
+  "tested_on": "2024-01-01 -> 2026-07 (hors entraînement)",
+  "features": [
+    "temperature_2m_max",
+    "temperature_2m_min",
+    "temperature_2m_mean",
+    "relative_humidity_2m_mean",
+    "wind_speed_10m_max",
+    "wind_gusts_10m_max",
+    "wind_direction_10m_dominant",
+    "precipitation_sum",
+    "rain_sum",
+    "sunshine_duration",
+    "shortwave_radiation_sum",
+    "et0_fao_evapotranspiration",
+    "surface_pressure_mean",
+    "precip_sum_7d",
+    "precip_sum_30d",
+    "temp_max_mean_7d",
+    "et0_sum_30d",
+    "days_since_rain",
+    "centroid_lat",
+    "centroid_lon",
+    "area_km2",
+    "month_sin",
+    "month_cos",
+    "wilaya_id"
+  ],
+  "metrics": {
+    "roc_auc_test": 0.751,
+    "pr_auc_test": 0.3309,
+    "brier_test": 0.1054,
+    "roc_auc_train": 0.8828,
+    "base_rate_test": 0.1327,
+    "n_train": 118332,
+    "n_test": 32904
+  },
+  "v1_metrics": {
+    "roc_auc_test": 0.7501,
+    "pr_auc_test": 0.3324,
+    "brier_test": 0.1051
+  },
+  "calibration": [
+    {
+      "decile": 0,
+      "proba_moyenne": 0.0061,
+      "taux_observe": 0.0088,
+      "n": 3291
+    },
+    {
+      "decile": 1,
+      "proba_moyenne": 0.0164,
+      "taux_observe": 0.0298,
+      "n": 3290
+    },
+    {
+      "decile": 2,
+      "proba_moyenne": 0.0288,
+      "taux_observe": 0.0547,
+      "n": 3290
+    },
+    {
+      "decile": 3,
+      "proba_moyenne": 0.0429,
+      "taux_observe": 0.0744,
+      "n": 3291
+    },
+    {
+      "decile": 4,
+      "proba_moyenne": 0.0601,
+      "taux_observe": 0.0903,
+      "n": 3290
+    },
+    {
+      "decile": 5,
+      "proba_moyenne": 0.0828,
+      "taux_observe": 0.1243,
+      "n": 3290
+    },
+    {
+      "decile": 6,
+      "proba_moyenne": 0.1153,
+      "taux_observe": 0.1559,
+      "n": 3291
+    },
+    {
+      "decile": 7,
+      "proba_moyenne": 0.1641,
+      "taux_observe": 0.1733,
+      "n": 3290
+    },
+    {
+      "decile": 8,
+      "proba_moyenne": 0.2684,
+      "taux_observe": 0.2237,
+      "n": 3290
+    },
+    {
+      "decile": 9,
+      "proba_moyenne": 0.5274,
+      "taux_observe": 0.3923,
+      "n": 3291
+    }
+  ],
+  "top_permutation_importance": {
+    "wilaya_id": 0.082,
+    "month_sin": 0.0293,
+    "sunshine_duration": 0.0201,
+    "temperature_2m_max": 0.0159,
+    "relative_humidity_2m_mean": 0.0082,
+    "et0_sum_30d": 0.0058,
+    "shortwave_radiation_sum": 0.0051,
+    "temp_max_mean_7d": 0.0041,
+    "month_cos": 0.0024,
+    "temperature_2m_min": 0.0023,
+    "et0_fao_evapotranspiration": 0.0016,
+    "precipitation_sum": 0.0015
+  }
+}
