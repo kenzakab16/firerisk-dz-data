@@ -30,6 +30,7 @@ scripts/
   10_fetch_weather_2000_2014.py          extension météo en arrière, 2000-2014
   11_fetch_firms_modis_2000_2014.py      détections MODIS 2000-2014 (seul satellite existant sur cette période)
   12_rebuild_full_pipeline_2000_2026.py  reconstruit la table finale sur l'ensemble 2000-2026
+  13_train_model.py                      entraîne le modèle prédictif (phase 4) et exporte model_fire_risk_v1.joblib
 ```
 
 Les fichiers `data/raw/` (détections FIRMS brutes, ~2,5M lignes cumulées) **ne sont pas versionnés** pour rester sous les limites de taille de GitHub — ils sont régénérables via les scripts de collecte.
@@ -128,4 +129,4 @@ Pour les mises à jour suivantes (nouvelles semaines de données), relancer uniq
 
 - Phase 2 : relief (SRTM), occupation des sols (ESA WorldCover), stockage PostgreSQL/PostGIS
 - Phase 3 : tableau de bord analytique (carte de risque par wilaya, corrélations météo ↔ incendies) — en cours
-- Phase 4 : modèle prédictif (Random Forest / XGBoost / LightGBM) sur `fire_detected`
+- Phase 4 : modèle prédictif — **v1 livrée** (`13_train_model.py`) : HistGradientBoosting entraîné sur l'ère VIIRS 2015-2023 (labels homogènes), testé sur 2024-2026 jamais vues (ROC-AUC 0,75, PR-AUC 0,33 pour un taux de base de 13%). Artefacts : `data/processed/model_fire_risk_v1.joblib` + méta JSON. Pistes v2 : variables d'assèchement antécédent (pluie cumulée 7/30 j), NDVI, relief

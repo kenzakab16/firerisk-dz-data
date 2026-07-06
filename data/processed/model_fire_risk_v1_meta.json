@@ -1,0 +1,97 @@
+{
+  "version": "v1",
+  "trained_on": "2015-01-01 -> 2023-12-31 (ère VIIRS, zone forestière, 36 wilayas)",
+  "tested_on": "2024-01-01 -> 2026-07 (hors entraînement)",
+  "features": [
+    "temperature_2m_max",
+    "temperature_2m_min",
+    "temperature_2m_mean",
+    "relative_humidity_2m_mean",
+    "wind_speed_10m_max",
+    "wind_gusts_10m_max",
+    "wind_direction_10m_dominant",
+    "precipitation_sum",
+    "rain_sum",
+    "sunshine_duration",
+    "shortwave_radiation_sum",
+    "et0_fao_evapotranspiration",
+    "surface_pressure_mean",
+    "centroid_lat",
+    "centroid_lon",
+    "area_km2",
+    "month_sin",
+    "month_cos",
+    "wilaya_id"
+  ],
+  "metrics": {
+    "roc_auc_test": 0.7501,
+    "pr_auc_test": 0.3324,
+    "brier_test": 0.1051,
+    "roc_auc_train": 0.8791,
+    "base_rate_test": 0.1327,
+    "n_train": 118332,
+    "n_test": 32904
+  },
+  "calibration": [
+    {
+      "decile": 0,
+      "proba_moyenne": 0.0057,
+      "taux_observe": 0.0073,
+      "n": 3291
+    },
+    {
+      "decile": 1,
+      "proba_moyenne": 0.0166,
+      "taux_observe": 0.0356,
+      "n": 3290
+    },
+    {
+      "decile": 2,
+      "proba_moyenne": 0.0295,
+      "taux_observe": 0.0508,
+      "n": 3290
+    },
+    {
+      "decile": 3,
+      "proba_moyenne": 0.0445,
+      "taux_observe": 0.0793,
+      "n": 3291
+    },
+    {
+      "decile": 4,
+      "proba_moyenne": 0.0624,
+      "taux_observe": 0.0933,
+      "n": 3290
+    },
+    {
+      "decile": 5,
+      "proba_moyenne": 0.0867,
+      "taux_observe": 0.1158,
+      "n": 3290
+    },
+    {
+      "decile": 6,
+      "proba_moyenne": 0.12,
+      "taux_observe": 0.1513,
+      "n": 3291
+    },
+    {
+      "decile": 7,
+      "proba_moyenne": 0.1707,
+      "taux_observe": 0.1757,
+      "n": 3290
+    },
+    {
+      "decile": 8,
+      "proba_moyenne": 0.2774,
+      "taux_observe": 0.2313,
+      "n": 3290
+    },
+    {
+      "decile": 9,
+      "proba_moyenne": 0.5192,
+      "taux_observe": 0.3871,
+      "n": 3291
+    }
+  ]
+}

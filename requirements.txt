@@ -3,3 +3,5 @@ geopandas
 shapely
 pyarrow
 numpy
+scikit-learn
+joblib
