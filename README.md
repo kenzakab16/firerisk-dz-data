@@ -2,7 +2,7 @@
 
 Pipeline ETL de collecte, nettoyage et fusion de données météo et incendies pour l'Algérie, en vue de la construction d'un modèle de risque incendie de forêt et d'un tableau de bord national.
 
-Ce dépôt contient la **phase 1** du projet FireRisk DZ : la constitution du jeu de données, couvrant **2000 → aujourd'hui**, mis à jour en continu. Le tableau de bord analytique (phase 3) est en développement dans un dépôt séparé.
+Ce dépôt contient la **phase 1** du projet FireRisk DZ : la constitution du jeu de données, couvrant **2000 → aujourd'hui**, mis à jour en continu. Le tableau de bord ([dépôt](https://github.com/kenzakab16/firerisk-dz-dashboard), [application en ligne](https://firerisk-dz-dashboard-ecgkns5pblbymjjfimagzn.streamlit.app/)) consomme ces données.
 
 ## Contenu
 
