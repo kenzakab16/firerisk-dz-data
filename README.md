@@ -9,14 +9,17 @@ Ce dépôt contient la **phase 1** du projet FireRisk DZ : la constitution du je
 ```
 data/
   processed/
-    wilayas.csv                              58 wilayas : id, code officiel, nom, centroïde, superficie, flag zone forestière
-    wilayas_simplified.geojson               géométries simplifiées des 58 wilayas (pour cartographie)
-    weather_2000_2014.csv                    météo journalière par wilaya (Open-Meteo / ERA5), 2000-01-01 → 2014-12-31
-    weather_2015_2026.csv                    météo journalière par wilaya, 2015-01-01 → aujourd'hui
-    fires_daily_wilaya_2000_2026.csv         détections de feux de végétation agrégées par jour x wilaya
-    ml_table_daily_wilaya_2000_2026.csv      table finale : météo + incendies, 58 wilayas, 1 ligne = 1 jour x 1 wilaya
-    ml_table_forest_zone_2000_2026.csv       même table, restreinte aux 36 wilayas à couverture forestière réelle
-    *.parquet                                mêmes tables en Parquet
+    wilayas.csv                                 58 wilayas : id, code officiel, nom, centroïde, superficie, flag zone forestière
+    wilayas_simplified.geojson                  géométries simplifiées des 58 wilayas (pour cartographie)
+    ml_table_daily_wilaya_2000_2025.parquet     historique FIGÉ : météo + incendies, 1 ligne = 1 jour x 1 wilaya, 2000-2025
+    ml_table_current_year.parquet               année en cours, MISE À JOUR QUOTIDIENNE (GitHub Actions)
+    fires_daily_wilaya_current_year.csv         détections quotidiennes de l'année en cours
+    recurring_thermal_spots.csv                 emplacements des torchères (filtre anti-faux-positifs du job quotidien)
+    model_fire_risk_v1.joblib                   modèle prédictif (phase 4)
+
+La table complète 2000 → aujourd'hui s'obtient en concaténant l'historique figé
+et le fichier de l'année en cours (mêmes colonnes). Les gros CSV intermédiaires
+(weather_*, ml_table complets) ne sont plus versionnés — régénérables via les scripts.
 scripts/
   01_build_wilayas.py                    géométrie + centroïdes des 58 wilayas
   02_fetch_weather.py                    météo Open-Meteo 2015-2023 (avec reprise sur erreur / rate-limit)
@@ -32,6 +35,8 @@ scripts/
   12_rebuild_full_pipeline_2000_2026.py  reconstruit la table finale sur l'ensemble 2000-2026
   13_train_model.py                      entraîne le modèle prédictif (phase 4) et exporte model_fire_risk_v1.joblib
   14_train_model_v2.py                   expérience v2 (assèchement antérieur) — pas de gain, voir ci-dessous
+  15_build_recurring_spots.py            exporte la liste des torchères depuis l'historique brut (local, ~1x/an)
+  16_daily_update.py                     mise à jour quotidienne incrémentale (tourne dans GitHub Actions)
 ```
 
 Les fichiers `data/raw/` (détections FIRMS brutes, ~2,5M lignes cumulées) **ne sont pas versionnés** pour rester sous les limites de taille de GitHub — ils sont régénérables via les scripts de collecte.
@@ -125,6 +130,19 @@ python 12_rebuild_full_pipeline_2000_2026.py  # table finale sur l'ensemble 2000
 ```
 
 Pour les mises à jour suivantes (nouvelles semaines de données), relancer uniquement les scripts 07/08/09 puis 12, ou directement 12 après avoir régénéré 07/08.
+
+## Mise à jour automatique quotidienne
+
+Le workflow [.github/workflows/daily-update.yml](.github/workflows/daily-update.yml) tourne chaque nuit (03:15 UTC) :
+il re-télécharge la météo de l'année en cours (API archive Open-Meteo, requêtes groupées), récupère les détections
+FIRMS des 14 derniers jours (toutes sources VIIRS), applique les mêmes filtres que le pipeline historique
+(feu de végétation + torchères via `recurring_thermal_spots.csv` + jointure wilaya), reconstruit
+`ml_table_current_year.parquet` et committe (~1 Mo/jour). Il ne nécessite aucune donnée brute historique.
+Déclenchable manuellement via l'onglet Actions (workflow_dispatch). La liste des torchères doit être
+rafraîchie localement environ une fois par an (`15_build_recurring_spots.py`, nécessite `data/raw/`).
+
+Le [tableau de bord](https://github.com/kenzakab16/firerisk-dz-dashboard) lit directement ces fichiers depuis
+GitHub (URL raw, cache 6 h) : il reste à jour sans redéploiement.
 
 ## Prochaines étapes
 

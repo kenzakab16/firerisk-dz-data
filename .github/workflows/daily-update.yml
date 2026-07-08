@@ -1,0 +1,44 @@
+name: Mise à jour quotidienne des données
+
+on:
+  schedule:
+    # Tous les jours à 03:15 UTC (04:15 Alger) — après la mise à disposition
+    # des données ERA5 de la veille et des passages satellites de la nuit.
+    - cron: "15 3 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install pandas geopandas shapely pyarrow numpy
+
+      - name: Mettre à jour les données de l'année courante
+        working-directory: scripts
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: python 16_daily_update.py
+
+      - name: Committer et pousser les mises à jour
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/processed/ml_table_current_year.parquet data/processed/fires_daily_wilaya_current_year.csv
+          if git diff --cached --quiet; then
+            echo "Aucun changement à committer."
+          else
+            git commit -m "data: mise à jour quotidienne ($(date -u +%Y-%m-%d))"
+            git push
+          fi

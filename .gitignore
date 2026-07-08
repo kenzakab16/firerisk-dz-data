@@ -10,3 +10,15 @@ venv/
 # non versionnées pour rester sous les limites de taille GitHub).
 data/raw/
 data/processed/fires_raw_with_wilaya*.csv
+
+# Tables complètes volumineuses — remplacées par l'historique figé
+# (ml_table_daily_wilaya_2000_2025.parquet) + les fichiers de l'année en
+# cours, mis à jour quotidiennement par GitHub Actions. Les versions
+# complètes restent régénérables localement (scripts 12).
+data/processed/ml_table_daily_wilaya_2000_2026.csv
+data/processed/ml_table_daily_wilaya_2000_2026.parquet
+data/processed/ml_table_forest_zone_2000_2026.csv
+data/processed/ml_table_forest_zone_2000_2026.parquet
+data/processed/fires_daily_wilaya_2000_2026.csv
+data/processed/weather_2000_2014.csv
+data/processed/weather_2015_2026.csv
