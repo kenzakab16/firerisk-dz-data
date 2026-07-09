@@ -38,6 +38,8 @@ OUT_CURRENT = f"{PROCESSED}/ml_table_current_year.parquet"
 WILAYAS_CSV = f"{PROCESSED}/wilayas.csv"
 WILAYAS_GEOJSON = f"{PROCESSED}/wilayas_simplified.geojson"
 RECURRING_SPOTS = f"{PROCESSED}/recurring_thermal_spots.csv"
+FORECAST_LOG = f"{PROCESSED}/forecast_log.csv"
+FORECAST_LOG_RETENTION_DAYS = 60
 
 MAP_KEY = os.environ.get("FIRMS_MAP_KEY") or "3564558944d7ab736a51254db8be2620"
 ALGERIA_BBOX = "-8.68,18.96,11.99,37.12"
@@ -126,6 +128,47 @@ def fetch_firms_recent(today):
     return fires
 
 
+def fetch_and_log_forecast(wilayas, today):
+    """Archive la prévision à 7 jours émise aujourd'hui pour toutes les
+    wilayas, afin de permettre un vrai backtesting prévision-vs-réel une
+    fois que les jours cibles seront passés. Log glissant (fenêtre
+    FORECAST_LOG_RETENTION_DAYS) pour ne pas grossir indéfiniment."""
+    frames = []
+    for i in range(0, len(wilayas), 29):
+        batch = wilayas.iloc[i:i + 29]
+        lats = ",".join(f"{v:.4f}" for v in batch["centroid_lat"])
+        lons = ",".join(f"{v:.4f}" for v in batch["centroid_lon"])
+        url = (
+            "https://api.open-meteo.com/v1/forecast"
+            f"?latitude={lats}&longitude={lons}"
+            f"&daily={','.join(DAILY_VARS)}&forecast_days=7&timezone=Africa%2FAlgiers"
+        )
+        data = json.loads(http_get(url, timeout=30))
+        if not isinstance(data, list):
+            data = [data]
+        for w, loc in zip(batch.itertuples(), data):
+            d = loc["daily"]
+            df = pd.DataFrame({k: d[k] for k in ["time"] + DAILY_VARS})
+            df["wilaya_id"] = w.wilaya_id
+            frames.append(df)
+        time.sleep(1)
+    new_log = pd.concat(frames, ignore_index=True).rename(columns={"time": "target_date"})
+    new_log["issued_date"] = today.isoformat()
+
+    if os.path.exists(FORECAST_LOG):
+        existing = pd.read_csv(FORECAST_LOG)
+        combined = pd.concat([existing, new_log], ignore_index=True)
+        combined = combined.drop_duplicates(subset=["issued_date", "target_date", "wilaya_id"], keep="last")
+    else:
+        combined = new_log
+
+    cutoff = (today - datetime.timedelta(days=FORECAST_LOG_RETENTION_DAYS)).isoformat()
+    combined = combined[combined["issued_date"] >= cutoff]
+    combined = combined.sort_values(["issued_date", "target_date", "wilaya_id"])
+    combined.to_csv(FORECAST_LOG, index=False)
+    print(f"  forecast_log.csv : {len(combined)} lignes ({combined['issued_date'].nunique()} jours d'émission)")
+
+
 def main():
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
@@ -194,6 +237,13 @@ def main():
     print(f"Écrit ml_table_current_year.parquet — {len(merged)} lignes "
           f"({merged['date'].min().date()} -> {merged['date'].max().date()}), "
           f"{int(merged['fire_detected'].sum())} jours-feu")
+
+    # --- 4. Archivage de la prévision du jour (pour backtesting futur) ---
+    print("Archivage de la prévision à 7 jours...")
+    try:
+        fetch_and_log_forecast(wilayas, today)
+    except Exception as e:
+        print(f"  (non bloquant) échec de l'archivage des prévisions : {e!r}")
 
 
 if __name__ == "__main__":

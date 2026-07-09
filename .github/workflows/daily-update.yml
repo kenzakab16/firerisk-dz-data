@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/processed/ml_table_current_year.parquet data/processed/fires_daily_wilaya_current_year.csv
+          git add data/processed/ml_table_current_year.parquet data/processed/fires_daily_wilaya_current_year.csv data/processed/forecast_log.csv
           if git diff --cached --quiet; then
             echo "Aucun changement à committer."
           else

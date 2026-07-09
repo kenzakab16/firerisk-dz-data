@@ -16,6 +16,7 @@ data/
     fires_daily_wilaya_current_year.csv         détections quotidiennes de l'année en cours
     recurring_thermal_spots.csv                 emplacements des torchères (filtre anti-faux-positifs du job quotidien)
     model_fire_risk_v1.joblib                   modèle prédictif (phase 4)
+    forecast_log.csv                            archive glissante (60j) des prévisions à 7 jours émises chaque jour, pour le backtesting
 
 La table complète 2000 → aujourd'hui s'obtient en concaténant l'historique figé
 et le fichier de l'année en cours (mêmes colonnes). Les gros CSV intermédiaires
@@ -137,7 +138,8 @@ Le workflow [.github/workflows/daily-update.yml](.github/workflows/daily-update.
 il re-télécharge la météo de l'année en cours (API archive Open-Meteo, requêtes groupées), récupère les détections
 FIRMS des 14 derniers jours (toutes sources VIIRS), applique les mêmes filtres que le pipeline historique
 (feu de végétation + torchères via `recurring_thermal_spots.csv` + jointure wilaya), reconstruit
-`ml_table_current_year.parquet` et committe (~1 Mo/jour). Il ne nécessite aucune donnée brute historique.
+`ml_table_current_year.parquet`, archive la prévision à 7 jours du jour dans `forecast_log.csv` (fenêtre glissante
+de 60 jours), et committe (~1 Mo/jour). Il ne nécessite aucune donnée brute historique.
 Déclenchable manuellement via l'onglet Actions (workflow_dispatch). La liste des torchères doit être
 rafraîchie localement environ une fois par an (`15_build_recurring_spots.py`, nécessite `data/raw/`).
 
