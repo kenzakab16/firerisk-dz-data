@@ -107,7 +107,7 @@ def fetch_firms_recent(today):
             url = (f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{MAP_KEY}/"
                    f"{source}/{ALGERIA_BBOX}/5/{d.isoformat()}")
             try:
-                text = http_get(url, timeout=30, retries=3)
+                text = http_get(url, timeout=20, retries=2)
             except RuntimeError:
                 print(f"  (échec ignoré) {source} {d}")
                 continue

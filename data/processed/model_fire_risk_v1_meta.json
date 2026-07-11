@@ -30,7 +30,9 @@
     "roc_auc_train": 0.8791,
     "base_rate_test": 0.1327,
     "n_train": 118332,
-    "n_test": 32904
+    "n_test": 32904,
+    "recall_at_budget": 0.3984,
+    "precision_at_budget": 0.2268
   },
   "calibration": [
     {
@@ -93,5 +95,27 @@
       "taux_observe": 0.3871,
       "n": 3291
     }
-  ]
+  ],
+  "permutation_importance": {
+    "wilaya_id": 0.07564,
+    "temperature_2m_max": 0.03283,
+    "month_sin": 0.03046,
+    "sunshine_duration": 0.01953,
+    "relative_humidity_2m_mean": 0.0178,
+    "shortwave_radiation_sum": 0.00561,
+    "month_cos": 0.0054,
+    "precipitation_sum": 0.00343,
+    "temperature_2m_min": 0.00255,
+    "et0_fao_evapotranspiration": 0.00246,
+    "surface_pressure_mean": 0.00224,
+    "wind_direction_10m_dominant": 0.00137,
+    "wind_speed_10m_max": 0.00124,
+    "temperature_2m_mean": 0.00078,
+    "wind_gusts_10m_max": 0.00072,
+    "rain_sum": 0.00058,
+    "centroid_lon": 3e-05,
+    "area_km2": 3e-05,
+    "centroid_lat": 1e-05
+  },
+  "alert_budget": 8
 }
